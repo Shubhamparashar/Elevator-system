@@ -89,3 +89,10 @@ class FloorRequest(models.Model):
 
     def __str__(self):
         return f'Request to go {self.direction} from floor {self.floor}'
+    
+
+class Floor(models.Model):
+    number = models.PositiveIntegerField()
+    
+    def __str__(self):
+        return f'Floor {self.number}'
