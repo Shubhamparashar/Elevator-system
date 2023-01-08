@@ -50,3 +50,12 @@ def get_elevator_movement(request, elevator_id):
     elevator = Elevator.objects.get(pk=elevator_id)
     return JsonResponse({'movement': elevator.movement}, status=200)
 
+def save_user_request(request):
+    """Save a user request to the list of requests for an elevator."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+    floor = request.POST.get('floor')
+    direction = request.POST.get('direction')
+    if not floor or not direction:
+        return JsonResponse({'error': 'Floor and direction must be provided'}, status=400)

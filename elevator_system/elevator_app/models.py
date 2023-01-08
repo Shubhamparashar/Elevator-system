@@ -15,7 +15,7 @@ class Elevator(models.Model):
         choices=MOVEMENT_CHOICES,
         default=STOPPED,
     )
-    floor = models.PositiveIntegerField()
+    floor = models.PositiveIntegerField(default=1)
     doors_open = models.BooleanField(default=False)
 
     # Fields for handling requests
