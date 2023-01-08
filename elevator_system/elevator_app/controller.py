@@ -7,13 +7,33 @@ class ElevatorSystemController:
         self.floors = []
 
         # Create the elevators and floors
-        for i in range(num_elevators):
-            elevator = Elevator.objects.create()
-            self.elevators.append(elevator)
+        last_elevator = Elevator.objects.last()
+        last_elevator_number = last_elevator.elevator_number if last_elevator else 0
 
-        for i in range(num_floors):
-            floor = Floor.objects.create(number=i+1)
-            self.floors.append(floor)
+        if last_elevator_number > num_elevators:
+            elevators = Elevator.objects.filter(elevator_number__lte=num_elevators)
+            self.elevators.extend(elevators)
+        else:
+            elevators = Elevator.objects.filter(elevator_number__lte=last_elevator_number)
+            self.elevators.extend(elevators)    
+            for i in range(last_elevator_number, num_elevators):
+                elevator = Elevator.objects.create(elevator_number=i)
+                self.elevators.append(elevator)
+
+
+        last_floor = Floor.objects.last()
+        last_floor_number = last_floor.number if last_floor else 0
+
+        if last_floor_number > num_floors:
+            floors = Floor.objects.filter(number__lte=num_floors)
+            self.floors.extend(floors)
+        else:
+            floors = Floor.objects.filter(number__lte=last_floor_number)
+            self.floors.extend(floors)    
+            for i in range(last_floor_number, num_floors):
+                floor = Floor.objects.create(number=i)
+                self.floors.append(floor)
+        
 
     def call_elevator(self, floor_number, direction):
         """Called when a user pushes the button on a floor to request an elevator."""

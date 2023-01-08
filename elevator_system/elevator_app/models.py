@@ -17,6 +17,7 @@ class Elevator(models.Model):
     )
     floor = models.PositiveIntegerField(default=1)
     doors_open = models.BooleanField(default=False)
+    elevator_number = models.PositiveIntegerField(default= 0)
 
     # Fields for handling requests
     requests = models.ManyToManyField('FloorRequest', blank=True)
@@ -71,7 +72,7 @@ class Elevator(models.Model):
         self.save()
 
     def __str__(self):
-        return f'Elevator {self.pk} on floor {self.floor} going {self.movement} with doors {self.doors_open}'
+        return f'Elevator {self.elevator_number} on floor {self.floor} with are doors open {self.doors_open}'
     
 
 class FloorRequest(models.Model):
