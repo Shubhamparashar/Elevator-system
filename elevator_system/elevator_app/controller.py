@@ -1,7 +1,7 @@
-from .models import Elevator, FloorRequest, Floor
+from .models import Elevator, FloorRequest
 
 class ElevatorSystemController:
-    def __init__(self, num_elevators, num_floors=10):
+    def __init__(self, num_elevators):
         self.num_elevators = num_elevators
         self.elevators = []
         self.floors = []
@@ -21,24 +21,10 @@ class ElevatorSystemController:
                 self.elevators.append(elevator)
 
 
-        last_floor = Floor.objects.last()
-        last_floor_number = last_floor.number if last_floor else 0
-
-        if last_floor_number > num_floors:
-            floors = Floor.objects.filter(number__lte=num_floors)
-            self.floors.extend(floors)
-        else:
-            floors = Floor.objects.filter(number__lte=last_floor_number)
-            self.floors.extend(floors)    
-            for i in range(last_floor_number, num_floors):
-                floor = Floor.objects.create(number=i)
-                self.floors.append(floor)
-        
-
-    def call_elevator(self, floor_number, direction):
+    def call_elevator(self, floor_number):
         """Called when a user pushes the button on a floor to request an elevator."""
         # Create a request for the elevator
-        request = FloorRequest.objects.create(floor=floor_number, direction=direction)
+        request = FloorRequest.objects.create(floor=floor_number)
 
         # Find the most optimal elevator for the request
         optimal_elevator = self.find_optimal_elevator(request)
@@ -46,6 +32,8 @@ class ElevatorSystemController:
 
         # Move the elevator to the requested floor
         optimal_elevator.decide_movement()
+        
+        optimal_elevator.complete_request(request)
 
     def find_optimal_elevator(self, request):
         """Find the most optimal elevator for a given request."""
@@ -62,4 +50,18 @@ class ElevatorSystemController:
         
         return optimal_elevator
     
+    def go_to_destination(self, elevator_id, floor_number):
+        """Called when a user pushes the button on a floor to request an elevator."""
+        elevator = Elevator.objects.get(pk=elevator_id)
+        # Create a request for the elevator
+        request = FloorRequest.objects.create(floor=floor_number)
+
+        # Assign request to the elevator
+        elevator.assign_request(request)
+
+        # Decide movement of the elevator 
+        elevator.decide_movement()
+        
+        # Move the elevator to the requested floor
+        elevator.complete_request(request)
     

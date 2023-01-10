@@ -46,15 +46,13 @@ class Elevator(models.Model):
         self.doors_open = False
         self.save()
 
-    def decide_movement(self):
+    def decide_movement(self, current_request):
         if not self.requests.exists():
             self.stop()
             return
-
-        current_request = self.requests.first()
-        if current_request.direction == self.UP:
+        if current_request.floor > self.floor:
             self.move_up()
-        elif current_request.direction == self.DOWN:
+        elif current_request.floor < self.floor:
             self.move_down()
         else:
             self.stop()
@@ -67,8 +65,9 @@ class Elevator(models.Model):
 
     def complete_request(self, request):
         """Remove a request from this elevator and mark it as available."""
-        self.requests.remove(request)
+        self.floor = request.floor
         self.available = True
+        self.movement = self.STOPPED
         self.save()
 
     def __str__(self):
@@ -76,24 +75,8 @@ class Elevator(models.Model):
     
 
 class FloorRequest(models.Model):
-    UP = 'UP'
-    DOWN = 'DOWN'
-    DIRECTION_CHOICES = [
-        (UP, 'Up'),
-        (DOWN, 'Down'),
-    ]
-    direction = models.CharField(
-        max_length=4,
-        choices=DIRECTION_CHOICES,
-    )
     floor = models.PositiveIntegerField()
-
-    def __str__(self):
-        return f'Request to go {self.direction} from floor {self.floor}'
-    
-
-class Floor(models.Model):
-    number = models.PositiveIntegerField()
     
     def __str__(self):
-        return f'Floor {self.number}'
+        return f'Request to go floor {self.floor}'
+    
