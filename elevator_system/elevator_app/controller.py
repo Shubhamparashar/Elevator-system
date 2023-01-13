@@ -8,16 +8,16 @@ class ElevatorSystemController:
 
         # Create the elevators and floors
         last_elevator = Elevator.objects.last()
-        last_elevator_number = last_elevator.elevator_number if last_elevator else 0
+        last_elevator_number = last_elevator.id if last_elevator else 0
 
         if last_elevator_number > num_elevators:
-            elevators = Elevator.objects.filter(elevator_number__lte=num_elevators)
+            elevators = Elevator.objects.filter(id__lte=num_elevators)
             self.elevators.extend(elevators)
         else:
-            elevators = Elevator.objects.filter(elevator_number__lte=last_elevator_number)
+            elevators = Elevator.objects.filter(id__lte=last_elevator_number)
             self.elevators.extend(elevators)    
             for i in range(last_elevator_number, num_elevators):
-                elevator = Elevator.objects.create(elevator_number=i)
+                elevator = Elevator.objects.create()
                 self.elevators.append(elevator)
 
 
