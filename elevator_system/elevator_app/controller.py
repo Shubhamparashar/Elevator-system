@@ -31,7 +31,7 @@ class ElevatorSystemController:
         optimal_elevator.assign_request(request)
 
         # Move the elevator to the requested floor
-        optimal_elevator.decide_movement()
+        optimal_elevator.decide_movement(request)
         
         optimal_elevator.complete_request(request)
 
@@ -60,7 +60,7 @@ class ElevatorSystemController:
         elevator.assign_request(request)
 
         # Decide movement of the elevator 
-        elevator.decide_movement()
+        elevator.decide_movement(request)
         
         # Move the elevator to the requested floor
         elevator.complete_request(request)

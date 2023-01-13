@@ -36,7 +36,6 @@ def get_requests_for_elevator(request, elevator_id):
             data = {
                 'id': request.id,
                 'floor': request.floor,
-                'direction': request.direction,
             }
             request_data.append(data)
 
@@ -83,7 +82,7 @@ def save_user_request(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-    
+         
 @csrf_exempt
 def request_to_move_current_elevator(request):
     """Requests for current elevator to move to destination."""
@@ -101,18 +100,30 @@ def request_to_move_current_elevator(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
-def mark_elevator_as_not_working(request, elevator_id):
+@csrf_exempt
+def mark_elevator_as_not_working(request):
     """Mark an elevator as not working or in maintenance."""
     try:
+        if request.method != 'POST':
+            return JsonResponse({'error': 'Invalid request method'}, status=405)
+        data = request.POST
+        state = bool(data.get('state'))
+        if not state:
+            return JsonResponse({'error': 'state must be provided'},status=400)
+        elevator_id = int(data.get('elevator_id'))
+        if not elevator_id:
+            return JsonResponse({'error': 'elevator_id must be provided'},status=400)
         elevator = Elevator.objects.get(pk=elevator_id)
-        elevator.is_working = False
+        elevator.operational = state
         elevator.save()
-
-        return JsonResponse({'success': 'Elevator marked as not working'}, status=200)
+        if state:
+            return JsonResponse({'success': 'Elevator marked as working'}, status=200)
+        else:
+            return JsonResponse({'success': 'Elevator marked as not working'}, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+@csrf_exempt
 def set_door_status(request, elevator_id):
     """Set the door status of an elevator."""
     try:
@@ -175,9 +186,7 @@ def get_request_list(request):
         for request in requests:
             data = {
                 'id': request.id,
-                'elevator': request.elevator.id,
                 'floor': request.floor,
-                'direction': request.direction,
             }
             request_list.append(data)
 
