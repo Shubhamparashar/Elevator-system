@@ -1,34 +1,37 @@
 # Elevator-system
 
-Steps to stepup and deploy
-Create database in your postgres with any name 
-Add you database creds in the .env 
-You need to install python 3.10
-Create new virtual env using cmd “virtualenv -p python3.10 venv”
-Activate virtual environment “source venv/bin/activate”
-Install requirement from requirement.txt “pip install -r requirement.txt”
-Create migrations file on database using “./manage.py makemigrations  elevator_app”
-Run migrations  “./manage.py migrate  elevator_app”
-After that you can start the project using “./manage.py runserver”
+1. Steps to stepup and deploy\
+
+	a. Create database in your postgres with any name\
+	b. Add you database creds in the .env\
+	c. You need to install python 3.10\ 
+	d. Create new virtual env using cmd “virtualenv -p python3.10 venv”\
+	e. Activate virtual environment “source venv/bin/activate”\
+	f. Install requirement from requirement.txt “pip install -r requirement.txt”\
+	g. Create migrations file on database using “./manage.py makemigrations  elevator_app”\
+	h. Run migrations  “./manage.py migrate  elevator_app”\
+	i. After that you can start the project using “./manage.py runserver”
 	
-Database modeling:-
-For database models(Entity) I used two models 
-The first Elevator is the primary model which handles all the elevator’s state and 
-The Second is FloorRequest which handles the request
+2. Database modeling:-
 
-	Elevator have the following according to my understanding of the problem
+	For database models(Entity) I used two models \
+	The first Elevator is the primary model which handles all the elevator’s state and \
+	The Second is FloorRequest which handles the request
 
-Movement : which stores the movement to current Elevator  
-floor : which at which floor elevator is on
-Doors_open : state of door is closed or open
-requests : stores the request associated with elevator
-available : is avialabe to sever other requests
-Operational : is working or not
+	a. Elevator have the following according to my understanding of the problem
 
-FloorRequest is pretty simple just holds the requests
+	Movement : which stores the movement to current Elevator  \
+	floor : which at which floor elevator is on\
+	Doors_open : state of door is closed or open\
+	requests : stores the request associated with elevator\
+	available : is avialabe to sever other requests\
+	Operational : is working or not\
 
-Service layer(ElevatorSystemController):-
-It handling most of the main logic like initilization, finding optimal elevator and call elevator 
+	b. FloorRequest is pretty simple just holds the requests\
+
+3. Service layer(ElevatorSystemController):-
+
+	It handling most of the main logic like initilization, finding optimal elevator and call elevator 
 
 
 API Endpoints:-
