@@ -1,6 +1,6 @@
 # Elevator-system
 
-1. Steps to stepup and deploy\
+1. Steps to stepup and deploy
 
 	a. Create database in your postgres with any name\
 	b. Add you database creds in the .env\
@@ -27,7 +27,7 @@
 	available : is avialabe to sever other requests\
 	Operational : is working or not\
 
-	b. FloorRequest is pretty simple just holds the requests\
+	b. FloorRequest is pretty simple just holds the requests
 
 3. Service layer(ElevatorSystemController):-
 
