@@ -22,6 +22,8 @@ def initialize_elevator_system(request):
         elevator_system.__init__(num_elevators)
         return JsonResponse({'success': 'Elevator system initialized'}, status=200)
     except Exception as e:
+        if isinstance(e, ValueError):
+            return JsonResponse({'error': 'num_elevators must be Integer'}, status=500)
         return JsonResponse({'error': str(e)}, status=500)
     
 @csrf_exempt
@@ -80,6 +82,8 @@ def save_user_request(request):
         elevator_system.call_elevator(floor)
         return JsonResponse({'success': 'Request added to elevator queue'}, status=200)
     except Exception as e:
+        if isinstance(e, ValueError):
+            return JsonResponse({'error': 'Floor must be Integer'}, status=500)
         return JsonResponse({'error': str(e)}, status=500)
     
          
@@ -90,14 +94,23 @@ def request_to_move_current_elevator(request):
         if request.method != 'POST':
             return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-        floor = int(request.POST.get('floor'))
-        elevator_id = int(request.POST.get('elevator_id'))
-        if not floor:
+        floor = None
+        elevator_id = None
+    
+        if request.POST.get('elevator_id'):
+           elevator_id = int(request.POST['elevator_id'])
+        else:
+             return JsonResponse({'error': 'Elevator Id must be provided'}, status=400)
+        if request.POST.get('floor'):
+           floor = int(request.POST['floor'])
+        else:
             return JsonResponse({'error': 'Floor must be provided'},status=400)
      # Call the elevator system to handle the request
         elevator_system.go_to_destination(elevator_id, floor)
         return JsonResponse({'success': 'Request added to elevator queue'}, status=200)
     except Exception as e:
+        if isinstance(e, ValueError):
+            return JsonResponse({'error': 'Elevator Id & Floor must be Integer'}, status=500)
         return JsonResponse({'error': str(e)}, status=500)
 
 @csrf_exempt
@@ -107,9 +120,14 @@ def mark_elevator_as_not_working(request):
         if request.method != 'POST':
             return JsonResponse({'error': 'Invalid request method'}, status=405)
         data = request.POST
-        state = bool(data.get('state'))
+        state = data.get('state')
         if not state:
             return JsonResponse({'error': 'state must be provided'},status=400)
+
+        if state.lower() == 'true':
+            state = True
+        else:
+            state = False
         elevator_id = int(data.get('elevator_id'))
         if not elevator_id:
             return JsonResponse({'error': 'elevator_id must be provided'},status=400)
@@ -121,6 +139,8 @@ def mark_elevator_as_not_working(request):
         else:
             return JsonResponse({'success': 'Elevator marked as not working'}, status=200)
     except Exception as e:
+        if isinstance(e, ValueError):
+            return JsonResponse({'error': 'Elevator Id must be Integer'}, status=500)
         return JsonResponse({'error': str(e)}, status=500)
 
 @csrf_exempt
